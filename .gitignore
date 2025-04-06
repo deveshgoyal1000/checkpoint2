@@ -1,0 +1,6 @@
+checkpointctl
+checkpointctl.coverage
+.coverage
+junit.xml
+test/piggie/piggie
+test/test-imgs

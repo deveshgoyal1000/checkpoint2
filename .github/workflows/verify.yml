@@ -1,0 +1,47 @@
+name: verify
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: latest
+        only-new-issues: true
+    - name: codespell
+      uses: codespell-project/actions-codespell@v2
+      with:
+        skip: vendor,*.svg
+
+  gomod:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: verify go.mod/go.sum
+      run: |
+        make vendor
+        git diff --exit-code
+
+  lint_markdown:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3
+      id: changes
+      with:
+        filters: |
+          md:
+            - 'README.md'
+            - '.github/workflows/verify.yml'
+    - name: Lint markdown
+      if: steps.changes.outputs.md == 'true'
+      uses: DavidAnson/markdownlint-cli2-action@v17
+      with:
+        globs: |
+          README.md

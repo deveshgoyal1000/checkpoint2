@@ -1,0 +1,73 @@
+name: Run Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          check-latest: true
+      - name: Install tools
+        run: |
+          # Add PPA for CRIU
+          sudo add-apt-repository ppa:criu/ppa
+          sudo apt-get update
+          sudo apt-get install -qqy shellcheck bats criu asciidoctor iptables iproute2 kmod jq bash bash-completion zsh fish
+          sudo modprobe -va ip_tables ip6table_filter nf_conntrack nf_conntrack_netlink
+      - name: Run make shellcheck
+        run: make shellcheck
+      - name: Run make all
+        run: make all
+      - name: Run make test
+        run: sudo -E make test
+      - name: Run make test-junit
+        run: sudo -E make test-junit
+      - name: Upload Test Results
+        # To display test results from forked repositories they need to
+        # be uploaded and then analyzed.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          retention-days: 1
+          path: test/junit.xml
+      - name: Run make install/uninstall
+        run: test/uninstall.sh
+      - name: Run make validate.completions
+        run: make validate.completions
+
+  event_file:
+    name: "Event File"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Upload
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: event-file
+        retention-days: 1
+        path: ${{ github.event_path }}
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build release binary
+      run: make release
+
+    - name: Check static binary
+      run: |
+        file_output=$(file checkpointctl)
+        if [[ "$file_output" =~ .*statically\ linked.* ]]; then
+          echo "Binary is static"
+          exit 0
+        else
+          echo "Binary is not static"
+          exit 1
+        fi
