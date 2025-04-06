@@ -90,6 +90,7 @@ function teardown() {
 @test "Run checkpointctl show with tar file with valid config.dump and valid spec.dump and checkpoint directory" {
 	cp data/config.dump "$TEST_TMP_DIR1"
 	cp data/spec.dump "$TEST_TMP_DIR1"
+	cp data/network.status "$TEST_TMP_DIR1"
 	mkdir "$TEST_TMP_DIR1"/checkpoint
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl show "$TEST_TMP_DIR2"/test.tar
@@ -129,6 +130,7 @@ function teardown() {
 @test "Run checkpointctl show with tar file compressed" {
 	cp data/config.dump "$TEST_TMP_DIR1"
 	cp data/spec.dump "$TEST_TMP_DIR1"
+	cp data/network.status "$TEST_TMP_DIR1"
 	mkdir "$TEST_TMP_DIR1"/checkpoint
 	( cd "$TEST_TMP_DIR1" && tar czf "$TEST_TMP_DIR2"/test.tar.gz . )
 	checkpointctl show "$TEST_TMP_DIR2"/test.tar.gz
@@ -173,6 +175,7 @@ function teardown() {
 @test "Run checkpointctl show with multiple tar files" {
 	cp data/config.dump "$TEST_TMP_DIR1"
 	cp data/spec.dump "$TEST_TMP_DIR1"
+	cp data/network.status "$TEST_TMP_DIR1"
 	mkdir "$TEST_TMP_DIR1"/checkpoint
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test1.tar .  && tar cf "$TEST_TMP_DIR2"/test2.tar . )
 	checkpointctl show "$TEST_TMP_DIR2"/*.tar
