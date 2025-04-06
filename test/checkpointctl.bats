@@ -180,8 +180,8 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test1.tar .  && tar cf "$TEST_TMP_DIR2"/test2.tar . )
 	checkpointctl show "$TEST_TMP_DIR2"/*.tar
 	[ "$status" -eq 0 ]
-	[[ ${lines[5]} == *"Podman"* ]]
 	[[ ${lines[7]} == *"Podman"* ]]
+	[[ ${lines[9]} == *"Podman"* ]]
 }
 
 @test "Run checkpointctl inspect with invalid format" {
@@ -228,7 +228,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --stats
 	[ "$status" -eq 1 ]
-	[[ ${lines[0]} == *"failed to get dump statistics"* ]]
+	[[ ${lines[2]} == *"failed to get dump statistics"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --stats and invalid stats-dump" {
@@ -239,7 +239,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --stats
 	[ "$status" -eq 1 ]
-	[[ ${lines[0]} == *"unknown magic"* ]]
+	[[ ${lines[2]} == *"unknown magic"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --stats and valid stats-dump" {
@@ -250,7 +250,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --stats
 	[ "$status" -eq 0 ]
-	[[ ${lines[8]} == *"CRIU dump statistics"* ]]
+	[[ ${lines[10]} == *"CRIU dump statistics"* ]]
 	[[ ${lines[12]} == *"Memwrite time"* ]]
 	[[ ${lines[13]} =~ [1-9] ]]
 }
@@ -276,7 +276,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree
 	[ "$status" -eq 0 ]
-	[[ ${lines[8]} == *"Process tree"* ]]
+	[[ ${lines[10]} == *"Process tree"* ]]
 	[[ ${lines[9]} == *"piggie"* ]]
 }
 
@@ -287,7 +287,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree
 	[ "$status" -eq 1 ]
-	[[ ${lines[0]} == *"failed to get process tree"* ]]
+	[[ ${lines[2]} == *"failed to get process tree"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --ps-tree-cmd" {
@@ -302,7 +302,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree-cmd
 	[ "$status" -eq 0 ]
-	[[ ${lines[9]} == *"Process tree"* ]]
+	[[ ${lines[11]} == *"Process tree"* ]]
 	[[ ${lines[10]} == *"piggie/piggie"* ]]
 }
 
@@ -327,7 +327,7 @@ function teardown() {
 	echo "$output"
 	rm -f "$NON_ROOT_BIN"
 	[ "$status" -eq 0 ]
-	[[ ${lines[9]} == *"Process tree"* ]]
+	[[ ${lines[11]} == *"Process tree"* ]]
 	[[ ${lines[10]} == *"piggie/piggie"* ]]
 }
 
@@ -342,7 +342,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree-cmd
 	[ "$status" -eq 1 ]
-	[[ ${lines[0]} == *"failed to process command line arguments"* ]]
+	[[ ${lines[2]} == *"failed to process command line arguments"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --ps-tree-env" {
@@ -373,7 +373,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree-env
 	[ "$status" -eq 1 ]
-	[[ ${lines[0]} == *"no such file or directory"* ]]
+	[[ ${lines[2]} == *"no such file or directory"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --files" {
