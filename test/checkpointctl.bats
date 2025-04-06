@@ -95,7 +95,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl show "$TEST_TMP_DIR2"/test.tar
 	[ "$status" -eq 0 ]
-	[[ ${lines[4]} == *"Podman"* ]]
+	[[ ${lines[6]} == *"Podman"* ]]
 }
 
 @test "Run checkpointctl show with tar file from containerd with valid config.dump and valid spec.dump and checkpoint directory" {
@@ -135,7 +135,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar czf "$TEST_TMP_DIR2"/test.tar.gz . )
 	checkpointctl show "$TEST_TMP_DIR2"/test.tar.gz
 	[ "$status" -eq 0 ]
-	[[ ${lines[4]} == *"Podman"* ]]
+	[[ ${lines[6]} == *"Podman"* ]]
 }
 
 @test "Run checkpointctl show with tar file corrupted" {
@@ -169,7 +169,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl show "$TEST_TMP_DIR2"/test.tar
 	[ "$status" -eq 0 ]
-	[[ ${lines[2]} == *"ROOT FS DIFF SIZE"* ]]
+	[[ ${lines[4]} == *"ROOT FS DIFF SIZE"* ]]
 }
 
 @test "Run checkpointctl show with multiple tar files" {
@@ -180,8 +180,8 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test1.tar .  && tar cf "$TEST_TMP_DIR2"/test2.tar . )
 	checkpointctl show "$TEST_TMP_DIR2"/*.tar
 	[ "$status" -eq 0 ]
-	[[ ${lines[3]} == *"Podman"* ]]
 	[[ ${lines[5]} == *"Podman"* ]]
+	[[ ${lines[7]} == *"Podman"* ]]
 }
 
 @test "Run checkpointctl inspect with invalid format" {
