@@ -251,7 +251,7 @@ function teardown() {
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --stats
 	[ "$status" -eq 0 ]
 	[[ ${lines[10]} == *"CRIU dump statistics"* ]]
-	[[ ${lines[12]} == *"Memwrite time"* ]]
+	[[ ${lines[14]} == *"Memwrite time"* ]]
 	[[ ${lines[13]} =~ [1-9] ]]
 }
 
@@ -277,7 +277,7 @@ function teardown() {
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree
 	[ "$status" -eq 0 ]
 	[[ ${lines[10]} == *"Process tree"* ]]
-	[[ ${lines[9]} == *"piggie"* ]]
+	[[ ${lines[11]} == *"piggie"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --ps-tree and missing pstree.img" {
@@ -303,7 +303,7 @@ function teardown() {
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree-cmd
 	[ "$status" -eq 0 ]
 	[[ ${lines[11]} == *"Process tree"* ]]
-	[[ ${lines[10]} == *"piggie/piggie"* ]]
+	[[ ${lines[12]} == *"piggie/piggie"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --ps-tree-cmd as non-root" {
@@ -328,7 +328,7 @@ function teardown() {
 	rm -f "$NON_ROOT_BIN"
 	[ "$status" -eq 0 ]
 	[[ ${lines[11]} == *"Process tree"* ]]
-	[[ ${lines[10]} == *"piggie/piggie"* ]]
+	[[ ${lines[12]} == *"piggie/piggie"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --ps-tree-cmd and missing pages-*.img" {
@@ -389,7 +389,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --files
 	[ "$status" -eq 0 ]
-	[[ ${lines[11]} == *"[REG 0]"* ]]
+	[[ ${lines[13]} == *"[REG 0]"* ]]
 	[[ ${lines[25]} == *"[cwd]"* ]]
 	[[ ${lines[26]} == *"[root]"* ]]
 }
@@ -441,7 +441,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree --pid 1
 	[ "$status" -eq 0 ]
-	[[ ${lines[8]} == *"Process tree"* ]]
+	[[ ${lines[10]} == *"Process tree"* ]]
 	[[ ${lines[9]} == *"piggie"* ]]
 }
 
@@ -551,7 +551,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar
 	[ "$status" -eq 0 ]
-	[[ ${lines[8]} == *"Root FS diff size"* ]]
+	[[ ${lines[10]} == *"Root FS diff size"* ]]
 }
 
 @test "Run checkpointctl inspect with multiple tar files" {
