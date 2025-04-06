@@ -61,7 +61,9 @@ func getPodmanInfo(containerConfig *lib.ContainerConfig, specDump *specs.Spec, t
 			defer os.RemoveAll(tmpDir)
 			
 			// Extract network.status file
-			fmt.Printf("Extracting network.status from: %s\n", task.CheckpointFilePath)
+			if !JSON {
+				fmt.Printf("Extracting network.status from: %s\n", task.CheckpointFilePath)
+			}
 			err = UntarFiles(task.CheckpointFilePath, tmpDir, []string{lib.NetworkStatusFile})
 			if err != nil {
 				fmt.Printf("Error extracting network.status: %v\n", err)
@@ -69,11 +71,15 @@ func getPodmanInfo(containerConfig *lib.ContainerConfig, specDump *specs.Spec, t
 				networkStatusFile := filepath.Join(tmpDir, lib.NetworkStatusFile)
 				ip, mac, err := getPodmanNetworkInfo(networkStatusFile)
 				if err != nil {
-					fmt.Printf("Error reading network info: %v\n", err)
+					if !JSON {
+						fmt.Printf("Error reading network info: %v\n", err)
+					}
 				} else {
 					info.IP = ip
 					info.MAC = mac
-					fmt.Printf("Found network info - IP: %s, MAC: %s\n", ip, mac)
+					if !JSON {
+						fmt.Printf("Found network info - IP: %s, MAC: %s\n", ip, mac)
+					}
 				}
 			}
 		}
