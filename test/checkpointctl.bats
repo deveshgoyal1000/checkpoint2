@@ -262,7 +262,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --mounts
 	[ "$status" -eq 0 ]
-	[[ ${lines[8]} == *"Overview of mounts"* ]]
+	[[ ${lines[11]} == *"Overview of mounts"* ]]
 	[[ ${lines[9]} == *"Destination"* ]]
 	[[ ${lines[10]} == *"proc"* ]]
 }
@@ -390,7 +390,7 @@ function teardown() {
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --files
 	[ "$status" -eq 0 ]
 	[[ ${lines[13]} == *"[REG 0]"* ]]
-	[[ ${lines[25]} == *"[cwd]"* ]]
+	[[ ${lines[28]} == *"[cwd]"* ]]
 	[[ ${lines[26]} == *"[root]"* ]]
 }
 
@@ -403,7 +403,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --files
 	[ "$status" -eq 1 ]
-	[[ ${lines[0]} == *"failed to get file descriptors"* ]]
+	[[ ${lines[2]} == *"Error: failed to get file descriptors"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --sockets" {
@@ -429,7 +429,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --sockets
 	[ "$status" -eq 1 ]
-	[[ ${lines[0]} == *"failed to get sockets"* ]]
+	[[ ${lines[2]} == *"Error: failed to get sockets"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --ps-tree and valid PID" {
@@ -442,7 +442,7 @@ function teardown() {
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree --pid 1
 	[ "$status" -eq 0 ]
 	[[ ${lines[10]} == *"Process tree"* ]]
-	[[ ${lines[9]} == *"piggie"* ]]
+	[[ ${lines[12]} == *"piggie"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --ps-tree and invalid PID" {
@@ -454,7 +454,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --ps-tree --pid 99999
 	[ "$status" -eq 1 ]
-	[[ ${lines[0]} == *"no process with PID 99999"* ]]
+	[[ ${lines[2]} == *"Error: failed to get process tree: no process with PID 99999"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file and --all and valid spec.dump and valid stats-dump" {
@@ -476,7 +476,7 @@ function teardown() {
 	run checkpointctl inspect "$TEST_TMP_DIR2"/test.tar --all
 	[ "$status" -eq 0 ]
 
-	[[ ${lines[9]} == *"CRIU dump statistics"* ]]
+	[[ ${lines[12]} == *"CRIU dump statistics"* ]]
 	[[ ${lines[13]} == *"Memwrite time"* ]]
 	[[ ${lines[14]} =~ [1-9] ]]
 
@@ -517,7 +517,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/test.tar
 	[ "$status" -eq 0 ]
-	[[ ${lines[6]} == *"Podman"* ]]
+	[[ ${lines[9]} == *"Podman"* ]]
 }
 
 @test "Run checkpointctl inspect with tar file from containerd with valid config.dump and valid spec.dump and checkpoint directory" {
@@ -561,7 +561,7 @@ function teardown() {
 	( cd "$TEST_TMP_DIR1" && tar cf "$TEST_TMP_DIR2"/test1.tar .  && tar cf "$TEST_TMP_DIR2"/test2.tar . )
 	checkpointctl inspect "$TEST_TMP_DIR2"/*.tar
 	[ "$status" -eq 0 ]
-	[[ ${lines[6]} == *"Podman"* ]]
+	[[ ${lines[9]} == *"Podman"* ]]
 	[[ ${lines[14]} == *"Podman"* ]]
 }
 
@@ -747,6 +747,12 @@ function teardown() {
 	test_socket_src_port() { jq -e '.[0].sockets[0].open_sockets[0].data.src_port == 5000'; }
 	export -f test_socket_src_port
 
+	test_network_ip() { jq -e '.[0].ip == "10.88.0.9/16"'; }
+	export -f test_network_ip
+
+	test_network_mac() { jq -e '.[0].mac == "f2:99:8d:fb:5a:57"'; }
+	export -f test_network_mac
+
 	# Run tests
 	run bash -c "$CHECKPOINTCTL inspect $TEST_TMP_DIR2/test.tar --format=json | test_engine"
 	[ "$status" -eq 0 ]
@@ -764,6 +770,12 @@ function teardown() {
 	[ "$status" -eq 0 ]
 
 	run bash -c "$CHECKPOINTCTL inspect $TEST_TMP_DIR2/test.tar --format=json --sockets | test_socket_src_port"
+	[ "$status" -eq 0 ]
+
+	run bash -c "$CHECKPOINTCTL inspect $TEST_TMP_DIR2/test.tar --format=json | test_network_ip"
+	[ "$status" -eq 0 ]
+
+	run bash -c "$CHECKPOINTCTL inspect $TEST_TMP_DIR2/test.tar --format=json | test_network_mac"
 	[ "$status" -eq 0 ]
 }
 
